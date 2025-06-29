@@ -1,0 +1,129 @@
+{%include "adminHeader.html"%}
+<div class="container mt-5">
+    <div class="container mt-4">
+        <h2 class="mb-4">Order Details</h2>
+        <div class="list-group">
+            <div class="list-group-item">
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>User ID:</strong> {{ order.user_id }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Caterer ID:</strong> {{ order.caterer_id }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Ordered Time:</strong> {{ order.ordered_time }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Delivery Date:</strong> {{ order.delivery_date }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Delivery Time:</strong> {{ order.delivery_time }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Delivery Address:</strong> {{ order.delivery_address }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Phone Number:</strong> {{ order.phone_number }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Function Name:</strong> {{ order.function_name }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Food Amount:</strong> {{ order.food_amount }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>GSTIN:</strong> {{ order.gstin }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Total Price:</strong> {{ order.total_price }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Delivery Charge:</strong> {{ order.delivery_charge }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Total Members (Veg):</strong> {{ order.total_member_veg }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Total Members (Non-Veg):</strong> {{ order.total_member_nonveg }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <strong>Total Paid:</strong> {{ order.total_paid }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Note:</strong> {{ order.note }}
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <a href="{% url 'orderDetails' %}" class="btn btn-primary mt-4">
+                            <i class="bi bi-arrow-left"></i> Back to Orders
+                        </a>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <button type="button" class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <i class="bi bi-cart"></i> Menu
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add a button or other action if needed -->
+        
+        
+          
+    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <main class="form-signin w-100 m-auto mt-5">
+                    <div class="container-fluid">
+                        {% for key,name in type %}
+                        
+                        
+                            {% for item in selected_items %}
+                            {% if item.menu_catagory == key %}
+                            <strong>{{name}}</strong>
+                                <div class="row border-top border-bottom border-dark pt-2 pb-2">
+                                    <!--<div class="col-3"><image class="d-block h-100 w-100" src="/media/{{ item.food_image }}" ></image></div>-->
+                                    <div class="col-6">{{ item.name }}</div>
+                                    <div class="col-3">{{ item.type_food }}</div>
+                                </div>
+                                <br>
+                              {%endif%}
+                            {% endfor %}
+                        {%endfor%}
+                    </div>
+                        
+            </main>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{%include "adminFooter.html"%}
+

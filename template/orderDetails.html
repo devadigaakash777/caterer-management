@@ -1,0 +1,174 @@
+
+{% include "adminHeader.html"%}
+
+    <div class="container mt-5">
+        <h1>Order List</h1>
+        <label for="status">Filter by status:</label>
+        <form method="GET" action="{% url 'orderDetails' %}">
+            <label for="status">Filter by status:</label>
+            <select name="status" id="status">
+                <option value="" {% if not current_status %}selected{% endif %}>All</option>
+                <option value="pending" {% if current_status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="delivered" {% if current_status == 'delivered' %}selected{% endif %}>Delivered</option>
+            </select>
+    
+            <!-- Sort by using radio buttons -->
+            <div class="btn-group m-3" role="group" aria-label="Sort options">
+                <input type="radio" class="btn-check" name="sort" id="btnradio1" autocomplete="off" onclick="this.form.submit()" value="id" {% if sort == 'id' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnradio1">ID</label>
+    
+                <input type="radio" class="btn-check" name="sort" id="btnradio2" autocomplete="off" onclick="this.form.submit()" value="ordered_time" {% if sort == 'ordered_time' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnradio2">Ordered Time</label>
+    
+                <input type="radio" class="btn-check" name="sort" id="btnradio3" autocomplete="off" onclick="this.form.submit()" value="delivery_date" {% if sort == 'delivery_date' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnradio3">Delivery Date</label>
+    
+                <input type="radio" class="btn-check" name="sort" id="btnradio4" autocomplete="off" onclick="this.form.submit()" value="total_price" {% if sort == 'total_price' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnradio4">Total Price</label>
+    
+                <input type="radio" class="btn-check" name="sort" id="btnradio5" autocomplete="off" onclick="this.form.submit()" value="status" {% if sort == 'status' %}checked{% endif %}>
+                <label class="btn btn-outline-primary" for="btnradio5">Status</label>
+            </div>
+        </form>
+    
+
+        <ul class="list-group">
+            {% for order in page_obj %}
+                <li class="list-group-item">
+                    <div class="container">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3">
+                            <div class="col">
+                                <strong>Order ID:</strong> {{ order.id }}
+                            </div>
+                            <div class="col">
+                                <strong>Ordered Time:</strong> {{ order.ordered_time }}
+                            </div>
+                        </div>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3">
+                            <div class="col">
+                                <strong>Delivery Date:</strong> {{ order.delivery_date }}
+                            </div>
+                            <div class="col">
+                                <strong>Total Price:</strong> {{ order.total_price }}
+                            </div>
+                        </div>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 mb-3">
+                            <div class="col">
+                                <strong>Status:</strong>
+                                <span class="{% if order.status == 'pending' %}text-danger{% endif %}">
+                                    {{ order.status }}
+                                </span>
+                                {% if order.status == 'pending' %}
+                                    <form method="post" id="updateStatus" action="">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="id" value="{{ order.id }}">
+                                        <button type="submit" class="btn btn-success btn-sm mt-2">Mark as Delivered</button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-success">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                    </span>
+                                {% endif %}
+                            </div>
+                            <div class="col" id="daysleft">
+                                <!-- JavaScript will update this -->
+                            </div>
+                            <script>
+                                if("{{ order.status }}" == "pending"){
+                                var days=document.getElementById("daysleft")
+                                var currentDate = new Date();
+                        
+                                // Parse the date string from Django template (assuming the date format is YYYY-MM-DD)
+                                var djangoDateString = "{{ order.delivery_date }}";  // e.g., "2024-07-28"
+                                var djangoDate = new Date(djangoDateString);
+                                var differenceInMillis =djangoDate - currentDate;
+            
+                                // Convert milliseconds to days
+                                var differenceInDays = differenceInMillis / (1000 * 60 * 60 * 24);
+            
+                                remainDate=Math.round(differenceInDays);
+                        
+                                // Compare the dates
+                                if (currentDate.toDateString() === djangoDate.toDateString()) {
+                                    days.innerText="today";
+                                } else if (currentDate > djangoDate) {
+                                    days.innerText="over";
+                                } else {
+                                    days.innerText=remainDate+"days left";
+                                }
+                                if(remainDate>0)
+                                {
+                                    document.getElementById("updateStatus").addEventListener("submit", function(event) {
+                                        // Display the confirmation dialog
+                                        var userConfirmed = confirm("Are you sure you want to delivery today?\nstill "+remainDate+"days left");
+            
+                                        // If the user clicks "Cancel", prevent form submission
+                                        if (!userConfirmed) {
+                                            event.preventDefault();  // Prevents the form from being submitted
+                                        }
+                                    });
+                                }
+                            }
+                            </script>
+                        </div>
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3">
+                            <div class="col"></div>
+                            <div class="col">
+                                <a href="{% url 'FullOrderDetails' id=order.id %}" class="btn btn-primary">View Order Details</a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            {% empty %}
+                <li class="list-group-item">No orders found.</li>
+            {% endfor %}
+        </ul>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1&sort={{ sort }}" aria-label="First">
+                            <span aria-hidden="true">&laquo;&laquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li class="page-item active" aria-current="page">
+                            <span class="page-link">{{ num }} <span class="sr-only">(current)</span></span>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ num }}&sort={{ sort }}">{{ num }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}&sort={{ sort }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&sort={{ sort }}" aria-label="Last">
+                            <span aria-hidden="true">&raquo;&raquo;</span>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    
+    
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    {% include "adminFooter.html"%}
+</body>
+</html>

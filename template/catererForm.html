@@ -1,0 +1,158 @@
+
+<head>
+
+  <style>
+    #progress-bar {
+      margin-bottom: 20px;
+    }
+    #currentImage {
+      width: 100px; /* Set the desired width */
+      height: auto; /* Maintain aspect ratio */
+      display: block; /* Block display to ensure proper spacing */
+      margin-top: 10px; /* Space between file input and image */
+    }
+    .form-group{
+      margin-bottom: 1rem;
+    }
+  </style>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+  {% include "adminHeader.html" %}
+    
+  <div class="container mt-5">
+    <h2 class="text-center">Caterer Form</h2>
+    <div id="progress-bar" class="progress">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar-fill" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%"></div>
+    </div>
+    
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="id_caterer_name">Caterer Name</label>
+            <input type="text" class="form-control" id="id_caterer_name" name="caterer_name" value="{{caterer.caterer_name}}">
+          </div>
+          <div class="form-group">
+            <label for="id_image">Image</label>
+            <input type="file" class="form-control-file" id="id_image" name="image">
+            <!-- Display the current image or a placeholder if none exists -->
+            <img id="currentImage" src="{{ caterer.image.url }}" alt="Current Image">
+        </div>
+          <div class="form-group">
+            <label for="id_description">Description</label>
+            <textarea class="form-control" id="id_description" name="description" rows="3">{{caterer.description}}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="id_street">Street</label>
+            <input type="text" class="form-control" id="id_street" name="street" value="{{caterer.street}}">
+          </div>
+          <div class="form-group">
+            <label for="id_city">City</label>
+            <input type="text" class="form-control" id="id_city" name="city" value="{{caterer.city}}">
+          </div>
+          <div class="form-group">
+            <label for="id_state">State</label>
+            <input type="text" class="form-control" id="id_state" name="state" value="{{caterer.state}}">
+          </div>
+          <div class="form-group">
+            <label for="id_zip_code">Zip Code</label>
+            <input type="text" class="form-control" id="id_zip_code" name="zip_code" value="{{caterer.zip_code}}">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="id_country">Country</label>
+            <input type="text" class="form-control" id="id_country" name="country" value="{{caterer.country}}">
+          </div>
+          <div class="form-group">
+            <label for="id_phone_number">Phone Number</label>
+            <input type="text" class="form-control" id="id_phone_number" name="phone_number" value="{{caterer.phone_number}}">
+          </div>
+          <div class="form-group">
+            <label for="id_type">Type</label>
+            <select class="form-control" id="id_type" name="type">
+              <option value="veg">Veg</option>
+              <option value="non-veg">Non-Veg</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="id_deliverable_area">Deliverable Area (in miles)</label>
+            <input type="number" class="form-control" id="id_deliverable_area" name="deliverable_area" value="{{caterer.deliverable_area}}">
+          </div>
+          <div class="form-group">
+            <label for="id_delivery_charge">Delivery Charge per mile</label>
+            <input type="number" class="form-control" id="id_delivery_charge" name="delivery_charge" value="{{caterer.delivery_charge}}">
+          </div>
+          <div class="form-group">
+            <label for="id_free_delivery_till_km">Free Delivery till (in miles)</label>
+            <input type="number" class="form-control" id="id_free_delivery_till_km" name="free_delivery_till_km" value="{{caterer.free_delivery_till_km}}">
+          </div>
+          <div class="form-group">
+            
+            <input type="hidden" class="form-control" id="id_max_order_day" name="max_order_night" value="{{caterer.max_order_night}}">
+          </div>
+          <div class="form-group">
+            
+            <input type="hidden" class="form-control" id="id_max_order_day" name="max_order_day" value="{{caterer.max_order_day}}">
+          </div>
+          <div class="form-group">
+            <label for="starting_price">Starting Price</label>
+            <input type="number" class="form-control" id="starting_price" name="starting_price" value="{{caterer.starting_price}}">
+          </div>
+          <div class="form-group">
+            <input type="hidden" class="form-control" id="gst_for_food" value="{{caterer.gst_for_food}}" name="gst_for_food">
+          </div>
+          <div class="form-group">
+            <label for="gstin_number">gstin number</label>
+            <input type="number" class="form-control" id="gstin_number" name="gstin_number" value="{{caterer.gstin_number}}">
+          </div>
+          <div class="form-group">
+            <label for="advance_percentage">advance percentage</label>
+            <input type="number" class="form-control" id="advance_percentage" name="advance_percentage" value="{{caterer.advance_percentage}}">
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" name="isavailable" checked>
+            <label class="form-check-label" for="flexSwitchCheckChecked">available</label>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="user_id" value="{{ user.id }}">  <!-- Hidden input for user_id -->
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
+  {% include "adminFooter.html" %}
+  <script>
+    $(document).ready(function() {
+      // Function to calculate and update progress bar
+      function updateProgressBar() {
+        var totalFields = $("form :input").length; // Total number of input fields in the form
+        var filledFields = $("form :input").filter(function() {
+          return $(this).val() !== ""; // Count filled fields
+        }).length;
+        var progress = (filledFields / totalFields) * 100; // Calculate progress percentage
+        $("#progress-bar-fill").width(progress + "%").attr("aria-valuenow", progress); // Update progress bar width
+      }
+
+      // Call the updateProgressBar function on input change
+      $("form :input").on("input", function() {
+        updateProgressBar();
+      });
+    });
+    document.getElementById('id_image').addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      const currentImage = document.getElementById('currentImage');
+
+      if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+              currentImage.src = e.target.result;
+          }
+          reader.readAsDataURL(file);
+      }
+  });
+  </script>

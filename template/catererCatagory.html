@@ -1,0 +1,114 @@
+
+
+  {% include "adminHeader.html" %}
+  <div class="container mt-5">
+    <h2 class="text-center">Menu Category Form </h2>
+    <div id="progress-bar" class="progress">
+      <div id="progress-bar-fill" class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+    <center><h1>CURRENT COST = <span id="currentCost"></span></h1></center>
+    <center><h1>TOTAL COST = {{amount}}</h1></center>
+    <form method="post" id="catagory_form" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label for="id_juice">Juice Cost</label>
+            <input type="number" class="form-control" id="id_juice" name="juice" value="{{catagory.juice}}" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_veg_starters_cost">Veg Starters Cost</label>
+            <input type="number" class="form-control" id="id_veg_starters_cost" value="{{catagory.veg_starters_cost}}" name="veg_starters_cost" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_nonveg_starters_cost">Non-Veg Starters Cost</label>
+            <input type="number" class="form-control" id="id_nonveg_starters_cost" value="{{catagory.nonveg_starters_cost}}" name="nonveg_starters_cost" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_veg_main_cost">Veg Main Cost</label>
+            <input type="number" class="form-control" id="id_veg_main_cost" value="{{catagory.veg_main_cost}}" name="veg_main_cost" step="0.01">
+          </div>
+          
+        </div>
+        <div class="col-md-6">
+          <div class="form-group mb-4">
+            <label for="id_nonveg_main_cost">Non-Veg Main Cost</label>
+            <input type="number" class="form-control" id="id_nonveg_main_cost" value="{{catagory.nonveg_main_cost}}" name="nonveg_main_cost" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_veg_bread_rice_noodle_cost">Veg Bread/Rice/Noodle Cost</label>
+            <input type="number" class="form-control" id="id_veg_bread_rice_noodle_cost" value="{{catagory.veg_bread_rice_noodle_cost}}" name="veg_bread_rice_noodle_cost" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_nonveg_bread_rice_noodle_cost">Non-Veg Bread/Rice/Noodle Cost</label>
+            <input type="number" class="form-control" id="id_nonveg_bread_rice_noodle_cost" value="{{catagory.nonveg_bread_rice_noodle_cost}}" name="nonveg_bread_rice_noodle_cost" step="0.01">
+          </div>
+          <div class="form-group mb-4">
+            <label for="id_dessert_cost">Dessert Cost</label>
+            <input type="number" class="form-control" id="id_dessert_cost" value="{{catagory.dessert_cost}}" name="dessert_cost" step="0.01">
+          </div>
+          <div class="form-group">
+            <input type="hidden" name="caterer_id" value="{{ user.id }}"> <!-- Hidden input for caterer_id -->
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary mb-4">Submit</button>
+    </form>
+  </div>
+  
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function() {
+    // Function to calculate and update progress bar
+    function updateProgressBar() {
+        var totalMaxValue = '{{amount}}'; // Total maximum value of all fields
+        var currentTotalValue = 0; // Current total value of all fields
+
+        $("form :input").slice(1, 9).each(function() {
+            var maxValue = parseFloat($(this).data('max-value')); // Get the maximum value for this field
+            var currentValue = parseFloat($(this).val()) || 0; // Get the current value of this field
+
+
+            if (!isNaN(maxValue)) {
+                totalMaxValue += maxValue; // Add to total max value
+            }
+
+            currentTotalValue += currentValue; // Add to current total value
+        });
+
+        
+        var progress = (currentTotalValue * 100) / totalMaxValue; // Calculate progress percentage
+        console.log(progress)
+        var color = (progress == 100) ? '#4caf50' : '#f44336'; // Red if less than 50%, green otherwise
+        $("#progress-bar-fill").css('background-color', color);
+
+        $("#progress-bar-fill").width(progress + "%").attr("aria-valuenow", progress); // Update progress bar width
+
+        $('#currentCost').text(currentTotalValue)
+        return progress;
+        
+    }
+
+    // Call the updateProgressBar function on input change
+    $("form :input").on("input", function() {
+        updateProgressBar();
+    });
+
+    // Intercept form submission
+    $("#catagory_form").on("submit", function(event) {
+        var progress = updateProgressBar(); // Update progress and get the current value
+        if (progress != 100) {
+            alert("total amount should be equal to {{amount}}(starting price) the form to submit.");
+            event.preventDefault(); // Prevent form submission
+        }
+    });
+    // Initialize progress bar on page load
+    updateProgressBar();
+    
+});
+
+  </script>
+{% include "adminFooter.html" %}
+

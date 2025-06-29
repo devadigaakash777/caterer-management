@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Django
+db.sqlite3
+*.log
+*.pot
+*.pyc
+
+# Media & Static
+media/
+staticfiles/
+
+# Environment
+.env
+*.env
+env/
+venv/
+ENV/
+caterer.api.env/
+
+# Migrations cache
+*/migrations/__pycache__/
+*/migrations/*.pyc
+
+# Editors
+.vscode/
+.idea/
+
+# OS/system files
+.DS_Store
+Thumbs.db
+
+# ER Diagrams and images
+*.drawio
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
